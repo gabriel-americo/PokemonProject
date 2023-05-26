@@ -34,7 +34,9 @@ namespace PokemonReviewApp.Repository
 
             _context.Add(pokemonCategory);
 
-            return ;
+            _context.Add(pokemon);
+
+            return Save();
         }
 
         public Pokemon GetPokemon(int id)
