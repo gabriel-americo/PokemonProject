@@ -37,7 +37,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetReviewer(int reviewerId)
         {
-            if (!_reviewerRepository.ReviwerExists(reviewerId))
+            if (!_reviewerRepository.ReviewerExists(reviewerId))
                 return NotFound();
 
             var reviewer = _mapper.Map<ReviewerDTO>(_reviewerRepository.GetReviwer(reviewerId));
@@ -51,7 +51,7 @@ namespace PokemonReviewApp.Controllers
         [HttpGet("{reviewerId}/reviews")]
         public IActionResult GetReviewsByAReviewer(int reviewerId)
         {
-            if (!_reviewerRepository.ReviwerExists(reviewerId))
+            if (!_reviewerRepository.ReviewerExists(reviewerId))
                 return NotFound();
 
             var reviews = _mapper.Map<List<ReviewDTO>>(_reviewerRepository.GetReviwesByReviers(reviewerId));
@@ -92,6 +92,35 @@ namespace PokemonReviewApp.Controllers
             }
 
             return Ok("Successfully created");
+        }
+
+        [HttpPut("{reviewerId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReviewer(int reviewerId, [FromBody] ReviewerDTO reviewerUpdate)
+        {
+            if (reviewerUpdate == null)
+                return BadRequest(ModelState);
+
+            if (reviewerId != reviewerUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_reviewerRepository.ReviewerExists(reviewerId))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var reviewerMap = _mapper.Map<Reviewer>(reviewerUpdate);
+
+            if (!_reviewerRepository.UpdateReviwer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Somenthing went wrong while updating");
+                return StatusCode(500, ModelState);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -22,6 +22,12 @@ namespace PokemonReviewApp.Repository
             return Save();
         }
 
+        public bool UpdateReview(Review review)
+        {
+            _context.Update(review);
+            return Save();
+        }
+
         public Review GetReview(int reviewId)
         {
             return _context.Reviews.Where(r => r.Id == reviewId).FirstOrDefault();
