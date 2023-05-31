@@ -25,6 +25,12 @@ namespace PokemonReviewApp.Repository
             return Save();
         }
 
+        public bool DeleteOwner(Owner owner)
+        {
+            _context.Remove(owner);
+            return Save();
+        }
+
         public Owner GetOwner(int ownerId)
         {
             return _context.Owners.Where(o => o.Id == ownerId).FirstOrDefault();
@@ -45,7 +51,7 @@ namespace PokemonReviewApp.Repository
             return _context.PokemonOwners.Where(p => p.Owner.Id == ownerId).Select(p => p.Pokemon).ToList();
         }
 
-        public bool OwnersExist(int ownerId)
+        public bool OwnersExists(int ownerId)
         {
             return _context.Owners.Any(o => o.Id == ownerId);
         }

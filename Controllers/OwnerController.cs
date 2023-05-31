@@ -38,7 +38,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetOwner(int ownerId)
         {
-            if (!_ownerRepository.OwnersExist(ownerId))
+            if (!_ownerRepository.OwnersExists(ownerId))
                 return NotFound();
 
             var owner = _mapper.Map<OwnerDTO>(_ownerRepository.GetOwner(ownerId));
@@ -54,7 +54,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetPokemonByOwner(int ownerId)
         {
-            if(! _ownerRepository.OwnersExist(ownerId))
+            if(! _ownerRepository.OwnersExists(ownerId))
                 return NotFound();
 
             var owner = _mapper.Map<List<PokemonDTO>>(_ownerRepository.GetPokemonByOwner(ownerId));
@@ -111,7 +111,7 @@ namespace PokemonReviewApp.Controllers
             if (ownerId != ownerUpdate.Id)
                 return BadRequest(ModelState);
 
-            if (!_ownerRepository.OwnersExist(ownerId))
+            if (!_ownerRepository.OwnersExists(ownerId))
                 return NotFound();
 
             if (!ModelState.IsValid)
@@ -124,6 +124,26 @@ namespace PokemonReviewApp.Controllers
                 ModelState.AddModelError("", "Somenthing went wrong while updating");
                 return StatusCode(500, ModelState);
             }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{ownerId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteOwner(int ownerId)
+        {
+            if (!_ownerRepository.OwnersExists(ownerId))
+                return NotFound();
+
+            var ownerToDelete = _ownerRepository.GetOwner(ownerId);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_ownerRepository.DeleteOwner(ownerToDelete))
+                ModelState.AddModelError("", "Somenthing went wrong deleting");
 
             return NoContent();
         }
